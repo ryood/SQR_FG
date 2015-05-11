@@ -14333,7 +14333,7 @@ http://www.zetex.com&lt;p&gt;
 <part name="T1" library="zetex" deviceset="NMOSE3L" device=""/>
 <part name="T2" library="zetex" deviceset="NMOSE3L" device=""/>
 <part name="C5" library="rcl" deviceset="C-EU" device="025-024X044" value="0.1uF"/>
-<part name="R3" library="rcl" deviceset="R-EU_" device="0207/7" value="33k"/>
+<part name="R3" library="rcl" deviceset="R-EU_" device="0207/7" value="10k"/>
 <part name="C6" library="rcl" deviceset="C-EU" device="025-024X044"/>
 <part name="AGND1" library="supply1" deviceset="AGND" device=""/>
 <part name="AGND2" library="supply1" deviceset="AGND" device=""/>
