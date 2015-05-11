@@ -3,3 +3,40 @@ Adjust_POT_Test/Adjust_POT_Test/Debug/
 Adjust_POT_Test/Adjust_POT_Test/Release/Adjust_POT_Test.d,Adjust_POT_Test/Adjust_POT_Test/Release/Adjust_POT_Test.eep,Adjust_POT_Test/Adjust_POT_Test/Release/Adjust_POT_Test.elf,Adjust_POT_Test/Adjust_POT_Test/Release/Adjust_POT_Test.hex,Adjust_POT_Test/Adjust_POT_Test/Release/Adjust_POT_Test.lss,Adjust_POT_Test/Adjust_POT_Test/Release/Adjust_POT_Test.map,Adjust_POT_Test/Adjust_POT_Test/Release/Adjust_POT_Test.o,Adjust_POT_Test/Adjust_POT_Test/Release/Adjust_POT_Test.srec,Adjust_POT_Test/Adjust_POT_Test/Release/Makefile,Adjust_POT_Test/Adjust_POT_Test/Release/makedep.mk
 Adjust_POT_Test/Adjust_POT_Test/Release/
 etc/
+
+# Ignore list for Eagle, a PCB layout tool
+
+# Backup files
+*.s#?
+*.b#?
+*.l#?
+
+# Eagle project file
+# It contains a serial number and references to the file structure
+# on your computer.
+# comment the following line if you want to have your project file included.
+eagle.epf
+
+# CAM files
+*.$$$
+*.cmp
+*.ly2
+*.l15
+*.sol
+*.plc
+*.stc
+*.sts
+*.crc
+*.crs
+
+*.dri
+*.drl
+*.gpi
+*.pls
+
+*.drd
+*.drd.*
+
+*.info
+
+*.eps
