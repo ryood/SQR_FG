@@ -16,8 +16,8 @@
 // PWM
 //
 #define PWM_DIR		DDRB
-#define PWM_A_PORT	1
-#define PWM_B_PORT	2
+#define PWM_A	1
+#define PWM_B	2
 
 // Rotary Encoder
 //
@@ -31,6 +31,13 @@
 // Potentiometer
 //
 #define POT_DUTY	0
+
+// GND Switch
+//
+#define GNDSW_DIR	DDRB
+#define GNDSW_PORT	PORTB
+#define GNDSW_GND	3
+#define GNDSW_VGND	4
 
 const uint16_t cycle_table[] = {
 	20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2
@@ -103,6 +110,19 @@ int8_t readRE(void)
 	return retVal;
 }
 
+int8_t readRE_SW(void)
+{
+	if ((RE_PIN & _BV(RE_SW)) == 0) {
+		_delay_ms(50);
+		if ((RE_PIN & _BV(RE_SW)) == 0) {
+			return 1;
+		}
+	}
+	_delay_ms(50);
+	
+	return 0;
+}
+
 /*------------------------------------------------------------------------/
  * Potentiometer
  *
@@ -167,6 +187,7 @@ int main(void)
 {
 	uint8_t freq = INITIAL_FREQ;
 	int8_t REval;
+	int8_t RE_SWval = 0;
 	uint16_t cycle;
 	uint8_t duty;
 	uint8_t old_duty = INITIAL_DUTY; 
@@ -174,13 +195,17 @@ int main(void)
 
 	// PWM
 	//
-	PWM_DIR = _BV(PWM_A_PORT) | _BV(PWM_B_PORT);
+	PWM_DIR |= _BV(PWM_A) | _BV(PWM_B);
 	
 	// Rotary Encoder
 	//
-	RE_DIR = 0;
 	// PullUp
-	RE_PORT = _BV(RE_A) | _BV(RE_B) | _BV(RE_SW);
+	RE_PORT |= _BV(RE_A) | _BV(RE_B) | _BV(RE_SW);
+	
+	// GND Level Switch
+	//
+	GNDSW_DIR |= _BV(GNDSW_GND) | _BV(GNDSW_VGND);
+	GNDSW_PORT |= _BV(GNDSW_GND);
 	
 	// Initialize ADC
 	//
@@ -195,9 +220,26 @@ int main(void)
 	
     while(1)
     {
+		// GND Level
+		//
+		if (readRE_SW()) {
+			if (RE_SWval) {
+				RE_SWval = 0;
+				GNDSW_PORT |= _BV(GNDSW_VGND);
+				GNDSW_PORT &= ~_BV(GNDSW_GND);
+			}
+			else {
+				RE_SWval = 1;
+				GNDSW_PORT |= _BV(GNDSW_GND);
+				GNDSW_PORT &= ~_BV(GNDSW_VGND);
+			}
+		}
+		
+		// Cycle & Duty
+		//
 		duty = readDuty();		
 		REval = readRE();
-		
+				
 		if (REval != 0 || duty != old_duty) {
 			old_duty = duty;
 			
