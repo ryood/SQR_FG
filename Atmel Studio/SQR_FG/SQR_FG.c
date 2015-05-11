@@ -110,17 +110,18 @@ int8_t readRE(void)
 	return retVal;
 }
 
+#define RE_SW_PRESS	(~(RE_PIN)&_BV(RE_SW))
+
 int8_t readRE_SW(void)
 {
-	if ((RE_PIN & _BV(RE_SW)) == 0) {
-		_delay_ms(50);
-		if ((RE_PIN & _BV(RE_SW)) == 0) {
-			return 1;
-		}
+	if (RE_SW_PRESS) {
+		_delay_ms(10);
+		while(RE_SW_PRESS)
+		;
+		_delay_ms(10);
+		return 1;
 	}
-	_delay_ms(50);
-	
-	return 0;
+	else return 0;
 }
 
 /*------------------------------------------------------------------------/
@@ -187,7 +188,7 @@ int main(void)
 {
 	uint8_t freq = INITIAL_FREQ;
 	int8_t REval;
-	int8_t RE_SWval = 0;
+	int8_t RE_SWval = 1;
 	uint16_t cycle;
 	uint8_t duty;
 	uint8_t old_duty = INITIAL_DUTY; 
@@ -205,7 +206,7 @@ int main(void)
 	// GND Level Switch
 	//
 	GNDSW_DIR |= _BV(GNDSW_GND) | _BV(GNDSW_VGND);
-	GNDSW_PORT |= _BV(GNDSW_GND);
+	GNDSW_PORT |= _BV(GNDSW_VGND);
 	
 	// Initialize ADC
 	//
@@ -225,13 +226,13 @@ int main(void)
 		if (readRE_SW()) {
 			if (RE_SWval) {
 				RE_SWval = 0;
-				GNDSW_PORT |= _BV(GNDSW_VGND);
-				GNDSW_PORT &= ~_BV(GNDSW_GND);
+				GNDSW_PORT |= _BV(GNDSW_GND);
+				GNDSW_PORT &= ~_BV(GNDSW_VGND);
 			}
 			else {
 				RE_SWval = 1;
-				GNDSW_PORT |= _BV(GNDSW_GND);
-				GNDSW_PORT &= ~_BV(GNDSW_VGND);
+				GNDSW_PORT |= _BV(GNDSW_VGND);
+				GNDSW_PORT &= ~_BV(GNDSW_GND);
 			}
 		}
 		
