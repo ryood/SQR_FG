@@ -5,13 +5,15 @@
  *  Author: gizmo
  */ 
 
+#define F_CPU	16000000UL
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sfr_defs.h>
 #include <stdint.h>
-
-#define F_CPU	16000000UL
 #include <util/delay.h>
+
+#include "SPLC792-I2C.h"
 
 // PWM
 //
@@ -40,7 +42,7 @@
 #define GNDSW_VGND	4
 
 const uint16_t cycle_table[] = {
-	20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2
+	50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2
 };
 
 #define CYCLE_TABLE_ELEMENTS	(sizeof(cycle_table)/sizeof(uint16_t))
@@ -77,6 +79,9 @@ void timer1_init_PWM(uint16_t cycle, uint16_t duty)
 	
 	// Timer1 Start, Set Prescaler to 8
 	TCCR1B |= (1 << CS11);
+	
+	// Test Prescaler
+	//TCCR1B |= (1 << CS11) | (1<< CS10);
 	
 }
 
@@ -186,9 +191,9 @@ static void wait_ms(short t)
 
 int main(void)
 {
-	uint8_t freq = INITIAL_FREQ;
+	int8_t freq = INITIAL_FREQ;
 	int8_t REval;
-	int8_t RE_SWval = 1;
+	int8_t RE_SWval = 1;	// 0:GND 1:VGND
 	uint16_t cycle;
 	uint8_t duty;
 	uint8_t old_duty = INITIAL_DUTY; 
@@ -216,6 +221,14 @@ int main(void)
 	//
 	cycle = cycle_table[freq];
 	timer1_init_PWM(cycle,  cycle / 2);
+	
+	// Initialize I2C-LCD
+	//
+	I2C_LCD_init();
+	I2C_LCD_puts("Square Wave");
+	I2C_LCD_setpos(1, 1);
+	I2C_LCD_puts("Generator");
+	_delay_ms(500);
 	
 	//sei();
 	
