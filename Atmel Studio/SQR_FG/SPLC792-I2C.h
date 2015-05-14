@@ -18,7 +18,8 @@
 #include <stdint.h>
 
 void I2C_LCD_init(void);
-void I2C_LCD_puts(char* s);
+void I2C_LCD_clear(void);
+void I2C_LCD_puts(const char* s);
 void I2C_LCD_setpos(uint8_t x, uint8_t y);
 
 #endif

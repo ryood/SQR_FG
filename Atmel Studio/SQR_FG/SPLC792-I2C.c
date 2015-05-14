@@ -152,7 +152,7 @@ void I2C_LCD_init(void)
 	// 3.0V時 数値を上げると濃くなります。
 	// 2.7Vでは0b111000くらいにしてください。。
 	// コントラストは電源電圧，温度によりかなり変化します。実際の液晶をみて調整してください。
-	uint8_t contrast = 0b110000;
+	uint8_t contrast = 0b111000;
 	
 	I2C_DIR |= _BV(I2C_LCD_RST);
 	
@@ -179,11 +179,16 @@ void I2C_LCD_init(void)
 	i2c_cmd(0b00111000); // function set
 	i2c_cmd(0b00001100); // Display On
 	
-	i2c_cmd(0b00000001); // Clear Display
-	_delay_ms(2);			 // Clear Displayは追加ウェイトが必要
+	I2C_LCD_clear();
 }
 
-void I2C_LCD_puts(char* s)
+void I2C_LCD_clear(void)
+{
+	i2c_cmd(0b00000001); // Clear Display
+	_delay_ms(2);		 // Clear Displayは追加ウェイトが必要
+}
+
+void I2C_LCD_puts(const char* s)
 {
 	i2c_puts((uint8_t *)s);
 }

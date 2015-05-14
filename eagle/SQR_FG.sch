@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -14355,6 +14355,9 @@ http://www.zetex.com&lt;p&gt;
 <wire x1="142.24" y1="68.58" x2="142.24" y2="88.9" width="0" layer="100" style="shortdash"/>
 <wire x1="142.24" y1="88.9" x2="121.92" y2="88.9" width="0" layer="100" style="shortdash"/>
 <text x="132.08" y="91.44" size="1.778" layer="100">Rotary Encoder</text>
+<wire x1="205.74" y1="152.4" x2="190.5" y2="152.4" width="0.1524" layer="100"/>
+<wire x1="190.5" y1="152.4" x2="190.5" y2="2.54" width="0.1524" layer="100"/>
+<text x="198.12" y="139.7" size="6.4516" layer="100" font="fixed">⇒別基板</text>
 </plain>
 <instances>
 <instance part="IC1" gate="G$1" x="63.5" y="88.9"/>
