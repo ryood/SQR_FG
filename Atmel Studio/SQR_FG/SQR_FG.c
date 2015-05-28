@@ -66,15 +66,15 @@ const uint16_t cycle_table[] = {
 // 状態遷移表示用
 //
 const char* state_str[] = {
-	"SQR WAV",
-	"IMPULSE",
-	"STEP   ",
-	"GND LVL"
+	"SQR WAV ",
+	"IMPULSE ",
+	"STEP    ",
+	"GND LVL "
 };
 
 const char* gnd_level_str[] = {
-	"GND ",
-	"VGND"
+	"    GND ",
+	"   VGND "
 };
 
 /*------------------------------------------------------------------------/
@@ -105,10 +105,10 @@ void timer1_init_PWM(uint16_t cycle, uint16_t duty)
 	TCCR1A |= (1 << COM1B1) | (0 << COM1B0);
 	
 	// Timer1 Start, Set Prescaler to 8
-	//TCCR1B |= (1 << CS11);
+	TCCR1B |= (1 << CS11);
 	
 	// Test Prescaler
-	TCCR1B |= (0 << CS12) | (1 << CS11) | (1<< CS10);
+	//TCCR1B |= (0 << CS12) | (1 << CS11) | (1<< CS10);
 }
 
 void timer1_stop_PWM(void)
@@ -121,6 +121,9 @@ void timer1_stop_PWM(void)
  * Rotary Encoder
  *
  ------------------------------------------------------------------------*/
+// 戻り値: ロータリーエンコーダーの回転方向
+//         0:変化なし 1:時計回り -1:反時計回り
+//
 int8_t readRE(void)
 {
 	static uint8_t index;
@@ -142,19 +145,22 @@ int8_t readRE(void)
 		break;
 	}
 	
-	_delay_ms(5);	// (とりあえず)チャタリング防止
+	_delay_ms(2);	// (とりあえず)チャタリング防止
 	
 	return retVal;
 }
 
 #define RE_SW_PRESS	(~(RE_PIN)&_BV(RE_SW))
 
+// 戻り値: ロータリーエンコーダーのプッシュスイッチ
+//         0:押されていない 1:押されている
+//
 int8_t readRE_SW(void)
 {
 	if (RE_SW_PRESS) {
 		_delay_ms(10);
 		while(RE_SW_PRESS)
-		;
+			;
 		_delay_ms(10);
 		return 1;
 	}
@@ -178,6 +184,9 @@ void adc_init(void)
 		| _BV(ADSC);		// 1回目変換開始(調整)
 }
 
+// 戻り値: ADCの8bit読み取り値（POTの回転）
+//         8bit (0..255)
+//
 uint8_t adc_convert8(uint8_t channel)
 {
 	ADMUX = _BV(REFS0)		// ADCの基準電圧(AVCC)
@@ -191,7 +200,9 @@ uint8_t adc_convert8(uint8_t channel)
 	return ADCH;
 }
 
-// 7bit 0..127
+// 戻り値: ADCの8bit読み取り値（POTの回転）
+//         7bit (0..127)
+//
 uint8_t readDuty(void)
 {
 	// 8bit -> 7bit
@@ -234,7 +245,7 @@ int main(void)
 	uint16_t duty;
 
 	int8_t RE_val;
-	//int8_t gnd_level = 1;	// 0:GND 1:VGND
+	int8_t gnd_level = 1;	// 0:GND 1:VGND
 	
 	char LCD_line[17];
 	
@@ -273,6 +284,7 @@ int main(void)
 	
 	I2C_LCD_clear();
 	I2C_LCD_puts(state_str[state]);
+	I2C_LCD_puts(gnd_level_str[gnd_level]);
 	
     while(1)
     {
@@ -285,6 +297,7 @@ int main(void)
 				state = 0;
 			I2C_LCD_clear();
 			I2C_LCD_puts(state_str[state]);
+			I2C_LCD_puts(gnd_level_str[gnd_level]);
 		}
 		
 		RE_val = readRE();
@@ -328,15 +341,17 @@ int main(void)
 			// ワン・ショットでH値を出力
 			if (RE_val != 0) {
 				PWM_PORT |= _BV(PWM_B);
-				_delay_ms(100);
+				//_delay_ms(100);
 				PWM_PORT &= ~_BV(PWM_B);
 			}
 			break;
 		case STAT_STEP:
+			/*
 			if (is_state_changed) {
 				timer1_stop_PWM();
 				PWM_PORT &= ~_BV(PWM_B);
 			}
+			*/
 			// Hi/Loの切り替え
 			if (RE_val != 0) {
 				PWM_PORT ^= _BV(PWM_B);
@@ -345,6 +360,19 @@ int main(void)
 		case STAT_GND_LEVEL:
 			// ToDo: GND/VGNDの切り替え
 			// PWMの有効無効は不要？
+			if (RE_val != 0 ) {
+				gnd_level = ((gnd_level == 0) ? 1 : 0);
+				if (gnd_level == 0) {
+					GNDSW_PORT |= _BV(GNDSW_GND);
+					GNDSW_PORT &= ~_BV(GNDSW_VGND);
+				} else {
+					GNDSW_PORT |= _BV(GNDSW_VGND);
+					GNDSW_PORT &= ~_BV(GNDSW_GND);
+				}
+				I2C_LCD_clear();
+				I2C_LCD_puts(state_str[state]);
+				I2C_LCD_puts(gnd_level_str[gnd_level]);
+			}
 			break;
 		}
 		
