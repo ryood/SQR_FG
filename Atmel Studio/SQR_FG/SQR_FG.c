@@ -81,21 +81,6 @@ const char* gnd_level_str[] = {
  * PWM
  *
  ------------------------------------------------------------------------*/
-void timer1_start_PWM(void)
-{
-	// Timer1 Start, Set Prescaler to 8
-	//TCCR1B |= (1 << CS11);
-	
-	// Test Prescaler
-	TCCR1B |= (0 << CS12) | (1 << CS11) | (1<< CS10);
-}
-
-void timer1_stop_PWM(void)
-{
-	// clear CS10, CS11, CS12
-	TCCR1B &= 0b11111000;
-}
-
 void timer1_set_cycle_duty(uint16_t cycle, uint16_t duty)
 {
 	// Output Compare Register
@@ -119,7 +104,17 @@ void timer1_init_PWM(uint16_t cycle, uint16_t duty)
 	TCCR1A |= (0 << COM1A1) | (1 << COM1A0);
 	TCCR1A |= (1 << COM1B1) | (0 << COM1B0);
 	
-	timer1_start_PWM();	
+	// Timer1 Start, Set Prescaler to 8
+	//TCCR1B |= (1 << CS11);
+	
+	// Test Prescaler
+	TCCR1B |= (0 << CS12) | (1 << CS11) | (1<< CS10);
+}
+
+void timer1_stop_PWM(void)
+{
+	TCCR1A = 0;
+	TCCR1B = 0;
 }
 
 /*------------------------------------------------------------------------/
@@ -322,22 +317,25 @@ int main(void)
 			}
 			// PWMの有効/無効のチェックと有効化
 			if (is_state_changed) {
-				timer1_start_PWM();
+				timer1_init_PWM(cycle, duty);
 			}
 			break;
 		case STAT_IMPULSE:
 			if (is_state_changed) {
 				timer1_stop_PWM();
+				PWM_PORT &= ~_BV(PWM_B);
 			}
 			// ワン・ショットでH値を出力
 			if (RE_val != 0) {
 				PWM_PORT |= _BV(PWM_B);
+				_delay_ms(100);
 				PWM_PORT &= ~_BV(PWM_B);
 			}
 			break;
 		case STAT_STEP:
 			if (is_state_changed) {
 				timer1_stop_PWM();
+				PWM_PORT &= ~_BV(PWM_B);
 			}
 			// Hi/Loの切り替え
 			if (RE_val != 0) {
