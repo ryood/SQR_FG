@@ -14625,7 +14625,7 @@ general purpose rectifier, 1 A</description>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="C4" library="rcl" deviceset="C-EU" device="025-024X044" value="0.1uF"/>
 <part name="R4" library="rcl" deviceset="R-EU_" device="0207/7" value="22k"/>
-<part name="R5" library="rcl" deviceset="R-EU_" device="0207/7" value="10k"/>
+<part name="R5" library="rcl" deviceset="R-EU_" device="0207/7" value="47k"/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="JP3" library="pinhead" deviceset="PINHD-1X3" device="" value="Duty"/>
 <part name="JP4" library="pinhead" deviceset="PINHD-1X4" device="" value="ENCODER"/>
