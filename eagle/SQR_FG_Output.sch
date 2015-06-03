@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -14329,10 +14329,8 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <part name="T1" library="transistor-power" deviceset="RD06HVF1" device="" value="2SK4017"/>
 <part name="T2" library="transistor-power" deviceset="RD06HVF1" device="" value="2SK4017"/>
 <part name="C5" library="rcl" deviceset="C-EU" device="025-024X044" value="0.1uF"/>
-<part name="R3" library="rcl" deviceset="R-EU_" device="0207/7" value="10k"/>
-<part name="C6" library="rcl" deviceset="C-EU" device="025-024X044" value="22pF"/>
+<part name="R3" library="rcl" deviceset="R-EU_" device="0207/7" value="1k"/>
 <part name="AGND1" library="supply1" deviceset="AGND" device=""/>
-<part name="AGND2" library="supply1" deviceset="AGND" device=""/>
 <part name="AGND3" library="supply1" deviceset="AGND" device=""/>
 <part name="AGND5" library="supply1" deviceset="AGND" device=""/>
 <part name="C3" library="rcl" deviceset="CPOL-EU" device="E2.5-5" value="100uF"/>
@@ -14345,6 +14343,8 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <part name="L1" library="rcl" deviceset="L-EU" device="0204/7" value="1uH"/>
 <part name="AGND4" library="supply1" deviceset="AGND" device=""/>
 <part name="JP2" library="pinhead" deviceset="PINHD-1X3" device=""/>
+<part name="L2" library="rcl" deviceset="L-EU" device="0204/7" value="1uH"/>
+<part name="C2" library="rcl" deviceset="C-EU" device="050-024X044" value="100p"/>
 </parts>
 <sheets>
 <sheet>
@@ -14353,9 +14353,9 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <instances>
 <instance part="P+3" gate="1" x="10.16" y="7.62"/>
 <instance part="IC2" gate="A" x="10.16" y="-7.62"/>
-<instance part="IC2" gate="B" x="71.12" y="58.42"/>
+<instance part="IC2" gate="B" x="88.9" y="58.42"/>
 <instance part="IC2" gate="P" x="10.16" y="-7.62"/>
-<instance part="R6" gate="G$1" x="91.44" y="58.42"/>
+<instance part="R6" gate="G$1" x="109.22" y="58.42"/>
 <instance part="R7" gate="G$1" x="-20.32" y="2.54" rot="R90"/>
 <instance part="R8" gate="G$1" x="-20.32" y="-12.7" rot="R90"/>
 <instance part="P+4" gate="1" x="-20.32" y="12.7"/>
@@ -14363,9 +14363,7 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <instance part="T2" gate="G$1" x="12.7" y="43.18"/>
 <instance part="C5" gate="G$1" x="15.24" y="2.54" rot="R90"/>
 <instance part="R3" gate="G$1" x="15.24" y="76.2" rot="R180"/>
-<instance part="C6" gate="G$1" x="55.88" y="68.58"/>
 <instance part="AGND1" gate="VR1" x="12.7" y="35.56"/>
-<instance part="AGND2" gate="VR1" x="45.72" y="71.12"/>
 <instance part="AGND3" gate="VR1" x="10.16" y="-22.86"/>
 <instance part="AGND5" gate="VR1" x="-20.32" y="-22.86"/>
 <instance part="C3" gate="G$1" x="-7.62" y="2.54"/>
@@ -14377,7 +14375,9 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <instance part="P+1" gate="1" x="-12.7" y="71.12"/>
 <instance part="L1" gate="G$1" x="-12.7" y="50.8"/>
 <instance part="AGND4" gate="VR1" x="-12.7" y="40.64"/>
-<instance part="JP2" gate="A" x="121.92" y="55.88"/>
+<instance part="JP2" gate="A" x="139.7" y="55.88"/>
+<instance part="L2" gate="G$1" x="58.42" y="60.96" rot="R90"/>
+<instance part="C2" gate="G$1" x="68.58" y="55.88"/>
 </instances>
 <busses>
 </busses>
@@ -14421,24 +14421,24 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 </net>
 <net name="N$16" class="0">
 <segment>
-<wire x1="55.88" y1="55.88" x2="55.88" y2="48.26" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="55.88" x2="78.74" y2="48.26" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="B" pin="-IN"/>
-<wire x1="55.88" y1="55.88" x2="63.5" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="55.88" x2="81.28" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="R6" gate="G$1" pin="1"/>
 <pinref part="IC2" gate="B" pin="OUT"/>
-<wire x1="78.74" y1="58.42" x2="81.28" y2="58.42" width="0.1524" layer="91"/>
-<wire x1="81.28" y1="58.42" x2="86.36" y2="58.42" width="0.1524" layer="91"/>
-<wire x1="55.88" y1="48.26" x2="81.28" y2="48.26" width="0.1524" layer="91"/>
-<wire x1="81.28" y1="48.26" x2="81.28" y2="58.42" width="0.1524" layer="91"/>
-<junction x="81.28" y="58.42"/>
+<wire x1="96.52" y1="58.42" x2="99.06" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="99.06" y1="58.42" x2="104.14" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="48.26" x2="99.06" y2="48.26" width="0.1524" layer="91"/>
+<wire x1="99.06" y1="48.26" x2="99.06" y2="58.42" width="0.1524" layer="91"/>
+<junction x="99.06" y="58.42"/>
 </segment>
 </net>
 <net name="BUFFERD" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="2"/>
-<wire x1="96.52" y1="58.42" x2="119.38" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="58.42" x2="137.16" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="JP2" gate="A" pin="1"/>
-<label x="101.6" y="58.42" size="1.778" layer="95"/>
+<label x="119.38" y="58.42" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$17" class="0">
@@ -14469,13 +14469,13 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <junction x="30.48" y="50.8"/>
 <wire x1="30.48" y1="50.8" x2="45.72" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="50.8" x2="45.72" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="43.18" x2="99.06" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="99.06" y1="43.18" x2="99.06" y2="53.34" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="43.18" x2="116.84" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="43.18" x2="116.84" y2="53.34" width="0.1524" layer="91"/>
 <pinref part="JP5" gate="A" pin="3"/>
 <wire x1="27.94" y1="58.42" x2="30.48" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="JP2" gate="A" pin="3"/>
-<wire x1="119.38" y1="53.34" x2="99.06" y2="53.34" width="0.1524" layer="91"/>
-<label x="101.6" y="53.34" size="1.778" layer="95"/>
+<wire x1="137.16" y1="53.34" x2="116.84" y2="53.34" width="0.1524" layer="91"/>
+<label x="119.38" y="53.34" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SW_GND" class="0">
@@ -14524,20 +14524,20 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <net name="BYPASS" class="0">
 <segment>
 <wire x1="27.94" y1="60.96" x2="50.8" y2="60.96" width="0.1524" layer="91"/>
-<pinref part="C6" gate="G$1" pin="2"/>
-<wire x1="50.8" y1="60.96" x2="55.88" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="55.88" y1="63.5" x2="55.88" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="JP5" gate="A" pin="2"/>
-<pinref part="IC2" gate="B" pin="+IN"/>
-<wire x1="63.5" y1="60.96" x2="55.88" y2="60.96" width="0.1524" layer="91"/>
-<junction x="55.88" y="60.96"/>
 <pinref part="JP2" gate="A" pin="2"/>
-<wire x1="119.38" y1="55.88" x2="91.44" y2="55.88" width="0.1524" layer="91"/>
-<wire x1="91.44" y1="55.88" x2="91.44" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="91.44" y1="45.72" x2="50.8" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="137.16" y1="55.88" x2="109.22" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="109.22" y1="55.88" x2="109.22" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="109.22" y1="45.72" x2="68.58" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="68.58" y1="45.72" x2="50.8" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="45.72" x2="50.8" y2="60.96" width="0.1524" layer="91"/>
+<label x="119.38" y="55.88" size="1.778" layer="95"/>
+<pinref part="L2" gate="G$1" pin="1"/>
+<wire x1="50.8" y1="60.96" x2="53.34" y2="60.96" width="0.1524" layer="91"/>
 <junction x="50.8" y="60.96"/>
-<label x="101.6" y="55.88" size="1.778" layer="95"/>
+<pinref part="C2" gate="G$1" pin="2"/>
+<wire x1="68.58" y1="50.8" x2="68.58" y2="45.72" width="0.1524" layer="91"/>
+<junction x="68.58" y="45.72"/>
 </segment>
 </net>
 <net name="AGND" class="0">
@@ -14545,13 +14545,6 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <pinref part="T2" gate="G$1" pin="S"/>
 <pinref part="AGND1" gate="VR1" pin="AGND"/>
 <wire x1="12.7" y1="38.1" x2="15.24" y2="38.1" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="C6" gate="G$1" pin="1"/>
-<wire x1="55.88" y1="71.12" x2="55.88" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="55.88" y1="76.2" x2="45.72" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="76.2" x2="45.72" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="AGND2" gate="VR1" pin="AGND"/>
 </segment>
 <segment>
 <pinref part="R8" gate="G$1" pin="1"/>
@@ -14593,6 +14586,17 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <wire x1="-27.94" y1="58.42" x2="-12.7" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="-12.7" y1="58.42" x2="-12.7" y2="55.88" width="0.1524" layer="91"/>
 <label x="-22.86" y="58.42" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="L2" gate="G$1" pin="2"/>
+<pinref part="IC2" gate="B" pin="+IN"/>
+<wire x1="63.5" y1="60.96" x2="68.58" y2="60.96" width="0.1524" layer="91"/>
+<pinref part="C2" gate="G$1" pin="1"/>
+<wire x1="68.58" y1="60.96" x2="81.28" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="68.58" y1="58.42" x2="68.58" y2="60.96" width="0.1524" layer="91"/>
+<junction x="68.58" y="60.96"/>
 </segment>
 </net>
 </nets>
