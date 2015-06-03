@@ -59,7 +59,7 @@ const uint16_t cycle_table[] = {
 };
 
 #define CYCLE_TABLE_ELEMENTS	(sizeof(cycle_table)/sizeof(uint16_t))
-#define INITIAL_FREQ	(4)
+#define INITIAL_FREQ	(5)
 #define INITIAL_DUTY	(64)
 
 
