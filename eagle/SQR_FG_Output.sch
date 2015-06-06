@@ -8,20 +8,20 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -30,8 +30,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -39,12 +39,12 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
@@ -14234,27 +14234,67 @@ Source: http://cache.national.com/ds/LM/LM158.pdf</description>
 <description>&lt;b&gt;Power Transistors&lt;/b&gt;&lt;p&gt;
 &lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
 <packages>
-<package name="RD06HVF1">
-<description>&lt;b&gt;RD06HVF1&lt;/b&gt;&lt;p&gt;
-Source: MITSUBISHI .. rd06hvf1.pdf</description>
-<wire x1="4.299" y1="-4.318" x2="4.478" y2="-4.064" width="0.1524" layer="21"/>
-<wire x1="4.299" y1="-4.318" x2="-4.224" y2="-4.318" width="0.1524" layer="21"/>
-<wire x1="-4.478" y1="-4.064" x2="-4.224" y2="-4.318" width="0.1524" layer="21"/>
-<wire x1="4.655" y1="-1.218" x2="4.478" y2="-4.064" width="0.1524" layer="21"/>
-<wire x1="-4.478" y1="-4.064" x2="-4.655" y2="-1.243" width="0.1524" layer="21"/>
-<pad name="1" x="-2.54" y="-2.54" drill="1" diameter="1.3" shape="long" rot="R90"/>
-<pad name="2" x="0" y="-2.54" drill="1" diameter="1.3" shape="long" rot="R90"/>
-<pad name="3" x="2.54" y="-2.54" drill="1" diameter="1.3" shape="long" rot="R90"/>
+<package name="TO220BV">
+<description>&lt;b&gt;Molded Package&lt;/b&gt;&lt;p&gt;
+grid 2.54 mm</description>
+<wire x1="4.699" y1="-4.318" x2="4.953" y2="-4.064" width="0.1524" layer="21"/>
+<wire x1="4.699" y1="-4.318" x2="-4.699" y2="-4.318" width="0.1524" layer="21"/>
+<wire x1="-4.953" y1="-4.064" x2="-4.699" y2="-4.318" width="0.1524" layer="21"/>
+<wire x1="5.08" y1="-1.143" x2="4.953" y2="-4.064" width="0.1524" layer="21"/>
+<wire x1="-4.953" y1="-4.064" x2="-5.08" y2="-1.143" width="0.1524" layer="21"/>
+<circle x="-4.4958" y="-3.7084" radius="0.254" width="0" layer="21"/>
+<pad name="G" x="-2.54" y="-2.54" drill="1.016" shape="long" rot="R90"/>
+<pad name="D" x="0" y="-2.54" drill="1.016" shape="long" rot="R90"/>
+<pad name="S" x="2.54" y="-2.54" drill="1.016" shape="long" rot="R90"/>
 <text x="-5.08" y="-6.0452" size="1.27" layer="25" ratio="10">&gt;NAME</text>
 <text x="-5.08" y="-7.62" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
-<rectangle x1="-4.75" y1="-0.762" x2="4.75" y2="0" layer="21"/>
-<rectangle x1="-4.75" y1="-1.27" x2="-3.429" y2="-0.762" layer="21"/>
+<rectangle x1="-5.334" y1="-0.762" x2="5.334" y2="0" layer="21"/>
+<rectangle x1="-5.334" y1="-1.27" x2="-3.429" y2="-0.762" layer="21"/>
 <rectangle x1="-1.651" y1="-1.27" x2="-0.889" y2="-0.762" layer="21"/>
 <rectangle x1="-3.429" y1="-1.27" x2="-1.651" y2="-0.762" layer="51"/>
 <rectangle x1="0.889" y1="-1.27" x2="1.651" y2="-0.762" layer="21"/>
-<rectangle x1="3.429" y1="-1.27" x2="4.75" y2="-0.762" layer="21"/>
+<rectangle x1="3.429" y1="-1.27" x2="5.334" y2="-0.762" layer="21"/>
 <rectangle x1="-0.889" y1="-1.27" x2="0.889" y2="-0.762" layer="51"/>
 <rectangle x1="1.651" y1="-1.27" x2="3.429" y2="-0.762" layer="51"/>
+</package>
+<package name="TO220BH">
+<description>&lt;b&gt;Molded Package&lt;/b&gt;&lt;p&gt;
+grid 2.54 mm</description>
+<wire x1="-5.207" y1="-1.27" x2="5.207" y2="-1.27" width="0.1524" layer="21"/>
+<wire x1="5.207" y1="14.605" x2="-5.207" y2="14.605" width="0.1524" layer="21"/>
+<wire x1="5.207" y1="-1.27" x2="5.207" y2="11.176" width="0.1524" layer="21"/>
+<wire x1="5.207" y1="11.176" x2="4.318" y2="11.176" width="0.1524" layer="21"/>
+<wire x1="4.318" y1="11.176" x2="4.318" y2="12.7" width="0.1524" layer="21"/>
+<wire x1="4.318" y1="12.7" x2="5.207" y2="12.7" width="0.1524" layer="21"/>
+<wire x1="5.207" y1="12.7" x2="5.207" y2="14.605" width="0.1524" layer="21"/>
+<wire x1="-5.207" y1="-1.27" x2="-5.207" y2="11.176" width="0.1524" layer="21"/>
+<wire x1="-5.207" y1="11.176" x2="-4.318" y2="11.176" width="0.1524" layer="21"/>
+<wire x1="-4.318" y1="11.176" x2="-4.318" y2="12.7" width="0.1524" layer="21"/>
+<wire x1="-4.318" y1="12.7" x2="-5.207" y2="12.7" width="0.1524" layer="21"/>
+<wire x1="-5.207" y1="12.7" x2="-5.207" y2="14.605" width="0.1524" layer="21"/>
+<wire x1="-4.572" y1="-0.635" x2="4.572" y2="-0.635" width="0.0508" layer="21"/>
+<wire x1="4.572" y1="7.62" x2="4.572" y2="-0.635" width="0.0508" layer="21"/>
+<wire x1="4.572" y1="7.62" x2="-4.572" y2="7.62" width="0.0508" layer="21"/>
+<wire x1="-4.572" y1="-0.635" x2="-4.572" y2="7.62" width="0.0508" layer="21"/>
+<circle x="0" y="11.176" radius="1.8034" width="0.1524" layer="21"/>
+<circle x="0" y="11.176" radius="4.191" width="0" layer="42"/>
+<circle x="0" y="11.176" radius="4.191" width="0" layer="43"/>
+<pad name="G" x="-2.54" y="-6.35" drill="1.1176" shape="long" rot="R90"/>
+<pad name="D" x="0" y="-6.35" drill="1.1176" shape="long" rot="R90"/>
+<pad name="S" x="2.54" y="-6.35" drill="1.1176" shape="long" rot="R90"/>
+<text x="-3.81" y="5.207" size="1.778" layer="25" ratio="10">&gt;NAME</text>
+<text x="-3.937" y="2.54" size="1.778" layer="27" ratio="10">&gt;VALUE</text>
+<text x="-4.445" y="7.874" size="1.016" layer="21" ratio="10">A17,5mm</text>
+<rectangle x1="2.159" y1="-4.699" x2="2.921" y2="-4.064" layer="21"/>
+<rectangle x1="-0.381" y1="-4.699" x2="0.381" y2="-4.064" layer="21"/>
+<rectangle x1="-2.921" y1="-4.699" x2="-2.159" y2="-4.064" layer="21"/>
+<rectangle x1="-3.175" y1="-4.064" x2="-1.905" y2="-1.27" layer="21"/>
+<rectangle x1="-0.635" y1="-4.064" x2="0.635" y2="-1.27" layer="21"/>
+<rectangle x1="1.905" y1="-4.064" x2="3.175" y2="-1.27" layer="21"/>
+<rectangle x1="-2.921" y1="-6.604" x2="-2.159" y2="-4.699" layer="51"/>
+<rectangle x1="-0.381" y1="-6.604" x2="0.381" y2="-4.699" layer="51"/>
+<rectangle x1="2.159" y1="-6.604" x2="2.921" y2="-4.699" layer="51"/>
+<hole x="0" y="11.176" drill="3.302"/>
 </package>
 </packages>
 <symbols>
@@ -14289,18 +14329,27 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="RD06HVF1" prefix="Q">
-<description>&lt;b&gt;RF Power MOSFET Transistor 175MHz,6W&lt;/b&gt;&lt;p&gt;
-Source: MITSUBISHI .. rd06hvf1.pdf</description>
+<deviceset name="BUZ11" prefix="Q">
+<description>&lt;b&gt;N-CHANNEL MOS FET&lt;/b&gt;</description>
 <gates>
-<gate name="G$1" symbol="MFN" x="0" y="0"/>
+<gate name="1" symbol="MFN" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="RD06HVF1">
+<device name="BV" package="TO220BV">
 <connects>
-<connect gate="G$1" pin="D" pad="3"/>
-<connect gate="G$1" pin="G" pad="1"/>
-<connect gate="G$1" pin="S" pad="2"/>
+<connect gate="1" pin="D" pad="D"/>
+<connect gate="1" pin="G" pad="G"/>
+<connect gate="1" pin="S" pad="S"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="BH" package="TO220BH">
+<connects>
+<connect gate="1" pin="D" pad="D"/>
+<connect gate="1" pin="G" pad="G"/>
+<connect gate="1" pin="S" pad="S"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -14321,13 +14370,13 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 </classes>
 <parts>
 <part name="P+3" library="supply1" deviceset="+5V" device=""/>
-<part name="IC2" library="linear" deviceset="LM358" device="N" value="NJM7032"/>
-<part name="R6" library="rcl" deviceset="R-EU_" device="0207/7" value="10"/>
+<part name="IC2" library="linear" deviceset="LM358" device="N" value="NJU7032"/>
+<part name="R6" library="rcl" deviceset="R-EU_" device="0207/7" value="47"/>
 <part name="R7" library="rcl" deviceset="R-EU_" device="0207/7" value="10k"/>
 <part name="R8" library="rcl" deviceset="R-EU_" device="0207/7" value="10k"/>
 <part name="P+4" library="supply1" deviceset="+5V" device=""/>
-<part name="T1" library="transistor-power" deviceset="RD06HVF1" device="" value="2SK4017"/>
-<part name="T2" library="transistor-power" deviceset="RD06HVF1" device="" value="2SK4017"/>
+<part name="T1" library="transistor-power" deviceset="BUZ11" device="BV" value="2SK4017"/>
+<part name="T2" library="transistor-power" deviceset="BUZ11" device="BV" value="2SK4017"/>
 <part name="C5" library="rcl" deviceset="C-EU" device="025-024X044" value="0.1uF"/>
 <part name="R3" library="rcl" deviceset="R-EU_" device="0207/7" value="1k"/>
 <part name="AGND1" library="supply1" deviceset="AGND" device=""/>
@@ -14338,13 +14387,14 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <part name="JP5" library="pinhead" deviceset="PINHD-1X3" device="" value="Level"/>
 <part name="JP1" library="pinhead" deviceset="PINHD-1X3" device="" value="DIGITAL_IN"/>
 <part name="C1" library="rcl" deviceset="C-EU" device="025-024X044" value="0.1uF"/>
-<part name="+5V" library="pinhead" deviceset="PINHD-1X2" device=""/>
+<part name="JP4" library="pinhead" deviceset="PINHD-1X2" device="" value="5VIN"/>
 <part name="P+1" library="supply1" deviceset="+5V" device=""/>
 <part name="L1" library="rcl" deviceset="L-EU" device="0204/7" value="1uH"/>
 <part name="AGND4" library="supply1" deviceset="AGND" device=""/>
-<part name="JP2" library="pinhead" deviceset="PINHD-1X3" device=""/>
+<part name="JP2" library="pinhead" deviceset="PINHD-1X3" device="" value="OUT"/>
 <part name="L2" library="rcl" deviceset="L-EU" device="0204/7" value="1uH"/>
-<part name="C2" library="rcl" deviceset="C-EU" device="050-024X044" value="100p"/>
+<part name="C2" library="rcl" deviceset="C-EU" device="075-032X103" value="100p"/>
+<part name="JP3" library="pinhead" deviceset="PINHD-1X2" device="" value="BYPASS_BUFFER"/>
 </parts>
 <sheets>
 <sheet>
@@ -14359,8 +14409,8 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <instance part="R7" gate="G$1" x="-20.32" y="2.54" rot="R90"/>
 <instance part="R8" gate="G$1" x="-20.32" y="-12.7" rot="R90"/>
 <instance part="P+4" gate="1" x="-20.32" y="12.7"/>
-<instance part="T1" gate="G$1" x="27.94" y="43.18"/>
-<instance part="T2" gate="G$1" x="12.7" y="43.18"/>
+<instance part="T1" gate="1" x="27.94" y="43.18"/>
+<instance part="T2" gate="1" x="12.7" y="43.18"/>
 <instance part="C5" gate="G$1" x="15.24" y="2.54" rot="R90"/>
 <instance part="R3" gate="G$1" x="15.24" y="76.2" rot="R180"/>
 <instance part="AGND1" gate="VR1" x="12.7" y="35.56"/>
@@ -14371,13 +14421,14 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <instance part="JP5" gate="A" x="25.4" y="60.96" rot="MR0"/>
 <instance part="JP1" gate="A" x="-30.48" y="27.94" rot="MR0"/>
 <instance part="C1" gate="G$1" x="15.24" y="-17.78" rot="R90"/>
-<instance part="+5V" gate="G$1" x="-30.48" y="58.42" rot="MR0"/>
+<instance part="JP4" gate="G$1" x="-30.48" y="58.42" rot="MR0"/>
 <instance part="P+1" gate="1" x="-12.7" y="71.12"/>
 <instance part="L1" gate="G$1" x="-12.7" y="50.8"/>
 <instance part="AGND4" gate="VR1" x="-12.7" y="40.64"/>
 <instance part="JP2" gate="A" x="139.7" y="55.88"/>
 <instance part="L2" gate="G$1" x="58.42" y="60.96" rot="R90"/>
 <instance part="C2" gate="G$1" x="68.58" y="55.88"/>
+<instance part="JP3" gate="G$1" x="88.9" y="78.74" rot="R90"/>
 </instances>
 <busses>
 </busses>
@@ -14393,7 +14444,7 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <junction x="-20.32" y="7.62"/>
 </segment>
 <segment>
-<pinref part="+5V" gate="G$1" pin="1"/>
+<pinref part="JP4" gate="G$1" pin="1"/>
 <pinref part="P+1" gate="1" pin="+5V"/>
 <wire x1="-27.94" y1="60.96" x2="-12.7" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="-12.7" y1="60.96" x2="-12.7" y2="68.58" width="0.1524" layer="91"/>
@@ -14436,9 +14487,15 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <net name="BUFFERD" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="2"/>
-<wire x1="114.3" y1="58.42" x2="137.16" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="58.42" x2="116.84" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="JP2" gate="A" pin="1"/>
 <label x="119.38" y="58.42" size="1.778" layer="95"/>
+<pinref part="JP3" gate="G$1" pin="2"/>
+<wire x1="116.84" y1="58.42" x2="137.16" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="76.2" x2="88.9" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="68.58" x2="116.84" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="68.58" x2="116.84" y2="58.42" width="0.1524" layer="91"/>
+<junction x="116.84" y="58.42"/>
 </segment>
 </net>
 <net name="N$17" class="0">
@@ -14460,9 +14517,9 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 </net>
 <net name="GND_OUT" class="0">
 <segment>
-<pinref part="T1" gate="G$1" pin="D"/>
+<pinref part="T1" gate="1" pin="D"/>
 <wire x1="30.48" y1="58.42" x2="30.48" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="T2" gate="G$1" pin="D"/>
+<pinref part="T2" gate="1" pin="D"/>
 <wire x1="30.48" y1="50.8" x2="30.48" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="15.24" y1="48.26" x2="15.24" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="15.24" y1="50.8" x2="30.48" y2="50.8" width="0.1524" layer="91"/>
@@ -14480,7 +14537,7 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 </net>
 <net name="SW_GND" class="0">
 <segment>
-<pinref part="T2" gate="G$1" pin="G"/>
+<pinref part="T2" gate="1" pin="G"/>
 <wire x1="10.16" y1="40.64" x2="2.54" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="2.54" y1="40.64" x2="2.54" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="-27.94" y1="27.94" x2="2.54" y2="27.94" width="0.1524" layer="91"/>
@@ -14490,7 +14547,7 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 </net>
 <net name="SW_VGND" class="0">
 <segment>
-<pinref part="T1" gate="G$1" pin="G"/>
+<pinref part="T1" gate="1" pin="G"/>
 <wire x1="-27.94" y1="25.4" x2="20.32" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="40.64" x2="20.32" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="40.64" x2="20.32" y2="25.4" width="0.1524" layer="91"/>
@@ -14506,7 +14563,7 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <wire x1="22.86" y1="-17.78" x2="22.86" y2="-7.62" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="-7.62" x2="30.48" y2="-7.62" width="0.1524" layer="91"/>
 <label x="28.448" y="-11.43" size="1.778" layer="95"/>
-<pinref part="T1" gate="G$1" pin="S"/>
+<pinref part="T1" gate="1" pin="S"/>
 <wire x1="30.48" y1="38.1" x2="30.48" y2="-7.62" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="A" pin="-IN"/>
 <wire x1="0" y1="-10.16" x2="2.54" y2="-10.16" width="0.1524" layer="91"/>
@@ -14523,18 +14580,18 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 </net>
 <net name="BYPASS" class="0">
 <segment>
-<wire x1="27.94" y1="60.96" x2="50.8" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="60.96" x2="48.26" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="JP5" gate="A" pin="2"/>
 <pinref part="JP2" gate="A" pin="2"/>
 <wire x1="137.16" y1="55.88" x2="109.22" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="109.22" y1="55.88" x2="109.22" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="109.22" y1="45.72" x2="68.58" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="68.58" y1="45.72" x2="50.8" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="50.8" y1="45.72" x2="50.8" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="68.58" y1="45.72" x2="48.26" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="45.72" x2="48.26" y2="60.96" width="0.1524" layer="91"/>
 <label x="119.38" y="55.88" size="1.778" layer="95"/>
 <pinref part="L2" gate="G$1" pin="1"/>
-<wire x1="50.8" y1="60.96" x2="53.34" y2="60.96" width="0.1524" layer="91"/>
-<junction x="50.8" y="60.96"/>
+<wire x1="48.26" y1="60.96" x2="53.34" y2="60.96" width="0.1524" layer="91"/>
+<junction x="48.26" y="60.96"/>
 <pinref part="C2" gate="G$1" pin="2"/>
 <wire x1="68.58" y1="50.8" x2="68.58" y2="45.72" width="0.1524" layer="91"/>
 <junction x="68.58" y="45.72"/>
@@ -14542,7 +14599,7 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 </net>
 <net name="AGND" class="0">
 <segment>
-<pinref part="T2" gate="G$1" pin="S"/>
+<pinref part="T2" gate="1" pin="S"/>
 <pinref part="AGND1" gate="VR1" pin="AGND"/>
 <wire x1="12.7" y1="38.1" x2="15.24" y2="38.1" width="0.1524" layer="91"/>
 </segment>
@@ -14581,7 +14638,7 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 </net>
 <net name="GND" class="0">
 <segment>
-<pinref part="+5V" gate="G$1" pin="2"/>
+<pinref part="JP4" gate="G$1" pin="2"/>
 <pinref part="L1" gate="G$1" pin="1"/>
 <wire x1="-27.94" y1="58.42" x2="-12.7" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="-12.7" y1="58.42" x2="-12.7" y2="55.88" width="0.1524" layer="91"/>
@@ -14597,6 +14654,10 @@ Source: MITSUBISHI .. rd06hvf1.pdf</description>
 <wire x1="68.58" y1="60.96" x2="81.28" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="58.42" x2="68.58" y2="60.96" width="0.1524" layer="91"/>
 <junction x="68.58" y="60.96"/>
+<wire x1="68.58" y1="60.96" x2="68.58" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="68.58" y1="68.58" x2="86.36" y2="68.58" width="0.1524" layer="91"/>
+<pinref part="JP3" gate="G$1" pin="1"/>
+<wire x1="86.36" y1="68.58" x2="86.36" y2="76.2" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
