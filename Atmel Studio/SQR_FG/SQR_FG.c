@@ -3,6 +3,8 @@
  *
  * Created: 2015/05/07 15:41:32
  *  Author: gizmo
+ * 
+ * 2015.12.02 Ver.2
  */ 
 
 #define F_CPU	16000000UL
@@ -17,14 +19,9 @@
 
 #include "SPLC792-I2C.h"
 
-// 状態遷移
-//
-#define STAT_SQR_WAV	0
-#define STAT_IMPULSE	1
-#define STAT_STEP		2
-#define STAT_GND_LEVEL	3
-#define MAX_STAT		4
-
+//-----------------------------------------------------------------------------
+// PORT 定義
+//-----------------------------------------------------------------------------
 // PWM
 //
 #define PWM_DIR		DDRB
@@ -45,37 +42,50 @@
 //
 #define POT_DUTY	0
 
-// GND Switch
+//-----------------------------------------------------------------------------
+// 定数定義
+//-----------------------------------------------------------------------------
+// 状態遷移
 //
-#define GNDSW_DIR	DDRB
-#define GNDSW_PORT	PORTB
-#define GNDSW_GND	3
-#define GNDSW_VGND	4
+#define STAT_SQR_WAV	0
+#define STAT_PRESCALER	1
+#define STAT_IMPULSE	2
+#define MAX_STAT		3
 
-// 周波数設定
+const char* state_str[] = {
+	"SQR WAV    ",
+	"PRE SCALER ",
+	"IMPULSE    ",
+};
+
+// 周期設定
 //
 const uint16_t cycle_table[] = {
-	50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2
+	50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1
 };
 
-#define CYCLE_TABLE_ELEMENTS	(sizeof(cycle_table)/sizeof(uint16_t))
-#define INITIAL_FREQ	(5)
-#define INITIAL_DUTY	(64)
+#define CYCLE_IDX_MAX		(sizeof(cycle_table)/sizeof(uint16_t))
+#define CYCLE_IDX_INIT		(5)
 
-
-// 状態遷移表示用
+// プリスケーラ
 //
-const char* state_str[] = {
-	"SQR WAV ",
-	"IMPULSE ",
-	"STEP    ",
-	"GND LVL "
-};
+#define PRESCALER_1			((0<<CS12)|(0<<CS11)|(1<<CS10))
+#define PRESCALER_8			((0<<CS12)|(1<<CS11)|(0<<CS10))
+#define PRESCALER_64		((0<<CS12)|(1<<CS11)|(1<<CS10))
+#define PRESCALER_256		((1<<CS12)|(0<<CS11)|(0<<CS10))
+#define PRESCALER_1024		((1<<CS12)|(0<<CS11)|(1<<CS10))
 
-const char* gnd_level_str[] = {
-	"    GND ",
-	"   VGND "
-};
+#define INITIAL_PRESCALER	(PRESCALER_8)
+
+// デューティ
+//
+#define INITIAL_DUTY		(64)
+
+//-----------------------------------------------------------------------------
+// 帯域変数
+//-----------------------------------------------------------------------------
+volatile uint8_t g_cycle_idx;		/* 0 .. CYCLE_IDX_MAX */
+volatile uint8_t g_duty;			/* 0 .. 127 */
 
 /*------------------------------------------------------------------------/
  * PWM
@@ -104,8 +114,8 @@ void timer1_init_PWM(uint16_t cycle, uint16_t duty)
 	TCCR1A |= (0 << COM1A1) | (1 << COM1A0);
 	TCCR1A |= (1 << COM1B1) | (0 << COM1B0);
 	
-	// Timer1 Start, Set Prescaler to 8
-	TCCR1B |= (1 << CS11);
+	// Timer1 Start, Set Prescaler to Initial Value
+	TCCR1B |= INITIAL_PRESCALER;
 	
 	// Test Prescaler
 	//TCCR1B |= (0 << CS12) | (1 << CS11) | (1<< CS10);
@@ -122,9 +132,9 @@ void timer1_stop_PWM(void)
  *
  ------------------------------------------------------------------------*/
 // 戻り値: ロータリーエンコーダーの回転方向
-//         0:変化なし 1:時計回り -1:反時計回り
+//        0:変化なし 1:時計回り -1:反時計回り
 //
-int8_t readRE(void)
+int8_t readRE_ROT(void)
 {
 	static uint8_t index;
 	int8_t retVal = 0;
@@ -153,7 +163,7 @@ int8_t readRE(void)
 #define RE_SW_PRESS	(~(RE_PIN)&_BV(RE_SW))
 
 // 戻り値: ロータリーエンコーダーのプッシュスイッチ
-//         0:押されていない 1:押されている
+//        0:押されていない 1:押されている
 //
 int8_t readRE_SW(void)
 {
@@ -165,6 +175,18 @@ int8_t readRE_SW(void)
 		return 1;
 	}
 	else return 0;
+}
+
+void read_cycle_idx()
+{
+	g_cycle_idx += readRE_ROT();
+
+	// 周期インデックスを 0..CYCLE_TABLE_ELEMENTS に制限
+	if (g_cycle_idx < 0) {
+		g_cycle_idx = 0;
+	} else if (g_cycle_idex >= CYCLE_TABLE_ELEMENTS) {
+		g_cycle_idx = CYCLE_TABLE_ELEMENTS - 1;
+	}
 }
 
 /*------------------------------------------------------------------------/
@@ -201,78 +223,77 @@ uint8_t adc_convert8(uint8_t channel)
 }
 
 // 戻り値: ADCの8bit読み取り値（POTの回転）
-//         7bit (0..127)
+//        7bit (0..127)
 //
-uint8_t readDuty(void)
+uint8_t read_duty(void)
 {
 	// 8bit -> 7bit
 	return adc_convert8(POT_DUTY) >> 1;
 }
 
 /*------------------------------------------------------------------------/
+ * generate wave
+ *
+ ------------------------------------------------------------------------*/
+ void setPWM(uint_16 cycle_idx, uint_16 duty)
+ {
+	cycle = cycle_table[cycle_idx];
+	
+	// デューティー比の計算 
+	// 1..cycle に制限
+	duty = (((uint32_t)cycle * duty) >> 7);
+	if (duty == 0)
+		duty = 1;
+		
+	timer1_set_cycle_duty(cycle, duty);
+ }
+
+void setPreScaler(uint_8 prescaler)
+{
+	// レジスタを設定
+}
+ 
+uint16_t calcFrequency(uint8_t cycle_idx, uint8_t duty)
+{
+	// 周期とデューティから周波数を計算
+	return 1000;
+}
+ 
+ 
+ /*------------------------------------------------------------------------/
  * main routine
  *
  ------------------------------------------------------------------------*/
-#if 0
-static void wait_us(short t)
+ int main(void)
 {
-	while(t-->=0){
-		asm volatile ("nop");
-		asm volatile ("nop");
-	}
-}
-
-// この関数でミリ秒のウェイトを入れます。引数 100 = 100ミリ秒ウェイト
-// クロックスピードにより調整してください。
-static void wait_ms(short t)
-{
-	while(t-->=0){
-		wait_us(1000);
-	}
-}
-#endif
-
-int main(void)
-{
+	// 状態変数
 	int8_t state = 0;
 	int8_t is_state_changed = 1;
-	
-	int8_t freq = INITIAL_FREQ;	
-	uint16_t cycle;
-	
-	uint8_t duty_val;
-	uint8_t old_duty_val = INITIAL_DUTY; 
-	uint16_t duty;
-
-	int8_t RE_val;
-	int8_t gnd_level = 1;	// 0:GND 1:VGND
-	
+	// LCD
 	char LCD_line[17];
 	
-	// PWM
+	//-------------------------------------------------------------------
+	// Portの初期化
+	//-------------------------------------------------------------------
+	// PWM Output
 	//
 	PWM_DIR |= _BV(PWM_A) | _BV(PWM_B);
 	
 	// Rotary Encoder
-	//
 	// PullUp
 	RE_PORT |= _BV(RE_A) | _BV(RE_B) | _BV(RE_SW);
 	
-	// GND Level Switch
-	//
-	GNDSW_DIR |= _BV(GNDSW_GND) | _BV(GNDSW_VGND);
-	GNDSW_PORT |= _BV(GNDSW_VGND);
-	
+	//-------------------------------------------------------------------
+	// デバイスのの初期化
+	//-------------------------------------------------------------------
 	// Initialize ADC
 	//
 	adc_init();
 
-	// sei();
-	
 	// Initialize PWM
 	//
-	cycle = cycle_table[freq];
-	timer1_init_PWM(cycle, cycle / 2);
+	g_cycle_idx = cycle_table[INITIAL_CYCLE_IDX];
+	timer1_init_PWM(g_cycle_idx, DUTY_MAX/2);
 	
 	// Initialize I2C-LCD
 	//
@@ -283,10 +304,11 @@ int main(void)
 	_delay_ms(1000);
 	
 	I2C_LCD_clear();
-	I2C_LCD_puts(state_str[state]);
-	I2C_LCD_puts(gnd_level_str[gnd_level]);
 	
-    while(1)
+	//-------------------------------------------------------------------
+	// メイン・ループ
+	//-------------------------------------------------------------------
+	while(1)
     {
 		// stateの遷移
 		//
@@ -297,82 +319,33 @@ int main(void)
 				state = 0;
 			I2C_LCD_clear();
 			I2C_LCD_puts(state_str[state]);
-			I2C_LCD_puts(gnd_level_str[gnd_level]);
 		}
-		
-		RE_val = readRE();
 		
 		switch (state) {
 		case STAT_SQR_WAV:
-			duty_val = readDuty();
-			if (RE_val != 0 || duty_val != old_duty_val || is_state_changed) {
-				old_duty_val = duty_val;
-				
-				freq += RE_val;
-				
-				// 周波数インデックスを 0..CYCLE_TABLE_ELEMENTS に制限
-				freq = freq < 0 ? 0 : (freq >= CYCLE_TABLE_ELEMENTS ? CYCLE_TABLE_ELEMENTS - 1 : freq);
-				
-				cycle = cycle_table[freq];
-				
-				// デューティー比の計算 
-				// 1..cycle に制限
-				duty = ((uint32_t)cycle * duty_val >> 7);
-				if (duty== 0)
-					duty = 1;
-				
-				timer1_set_cycle_duty(cycle, duty);
-				
-				// LCDに表示
-				I2C_LCD_setpos(0, 1);
-				sprintf(LCD_line, "F:%7ld D:%2d", 1000000/cycle, duty_val*100/128);
-				I2C_LCD_puts(LCD_line);
-			}
-			// PWMの有効/無効のチェックと有効化
-			if (is_state_changed) {
-				timer1_init_PWM(cycle, duty);
-			}
+			// 周期を取得
+			read_cycle_idx();
+			// デューティを取得
+			read_duty();
+			// 矩形波を出力
+			setPWM(g_cycle_idx, g_duty);
+			// LCDに表示
+			I2C_LCD_setpos(0, 1);
+			sprintf(LCD_line, "F:%7d D:%2d", 
+				calc_freq(cycle_table[g_cycle_idx], g_duty),
+				g_duty * 100 / 128
+			);
+			I2C_LCD_puts(LCD_line);
 			break;
 		case STAT_IMPULSE:
-			if (is_state_changed) {
-				timer1_stop_PWM();
-				PWM_PORT &= ~_BV(PWM_B);
-			}
-			// ワン・ショットでH値を出力
-			if (RE_val != 0) {
-				PWM_PORT |= _BV(PWM_B);
-				//_delay_ms(100);
-				PWM_PORT &= ~_BV(PWM_B);
-			}
+			// 周期を取得
+			// impulseを出力
+			// LCDに表示
 			break;
-		case STAT_STEP:
-			/*
-			if (is_state_changed) {
-				timer1_stop_PWM();
-				PWM_PORT &= ~_BV(PWM_B);
-			}
-			*/
-			// Hi/Loの切り替え
-			if (RE_val != 0) {
-				PWM_PORT ^= _BV(PWM_B);
-			}
-			break;
-		case STAT_GND_LEVEL:
-			// ToDo: GND/VGNDの切り替え
-			// PWMの有効無効は不要？
-			if (RE_val != 0 ) {
-				gnd_level = ((gnd_level == 0) ? 1 : 0);
-				if (gnd_level == 0) {
-					GNDSW_PORT |= _BV(GNDSW_GND);
-					GNDSW_PORT &= ~_BV(GNDSW_VGND);
-				} else {
-					GNDSW_PORT |= _BV(GNDSW_VGND);
-					GNDSW_PORT &= ~_BV(GNDSW_GND);
-				}
-				I2C_LCD_clear();
-				I2C_LCD_puts(state_str[state]);
-				I2C_LCD_puts(gnd_level_str[gnd_level]);
-			}
+		case STAT_PRESCALER:
+			// プリスケーラを取得
+			// プリスケーラを設定
+			// LCDに表示
 			break;
 		}
 		
