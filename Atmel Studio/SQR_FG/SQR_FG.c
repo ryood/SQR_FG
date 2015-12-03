@@ -92,8 +92,8 @@ const uint16_t prescaler_table[] = {
 // ‘Ñˆæ•Ï”
 //-----------------------------------------------------------------------------
 volatile int8_t g_cycle_idx;		/* 0 .. CYCLE_IDX_MAX */
-volatile uint8_t g_duty;			/* 0 .. 127 */
-volatile uint8_t g_prescaler;		/* 0b000 .. 0b111 */
+volatile uint8_t g_duty;			/* 0 .. 127           */
+volatile uint8_t g_prescaler;		/* 0b000 .. 0b111     */
 
 /*------------------------------------------------------------------------/
  * PWM
@@ -137,7 +137,7 @@ void timer1_init_PWM(uint16_t cycle, uint16_t duty)
 
  void timer1_set_PWM(uint16_t cycle_idx, uint8_t duty)
  {
-	 uint16_t cycle, duty_cnt;
+	uint16_t cycle, duty_cnt;
 	
 	cycle = cycle_table[cycle_idx];
 	
@@ -168,8 +168,15 @@ int8_t readRE_ROT(void)
 {
 	static uint8_t index;
 	int8_t retVal = 0;
+	uint8_t rv;
 	
-	index = (index << 2) | (RE_PIN & _BV(RE_A)) | (RE_PIN & _BV(RE_B));
+	// ƒ`ƒƒƒ^ƒŠƒ“ƒO‘Îô
+	rv = (RE_PIN & _BV(RE_A)) | (RE_PIN & _BV(RE_B));
+	_delay_ms(2);
+	if (rv != ((RE_PIN & _BV(RE_A)) | (RE_PIN & _BV(RE_B))))
+		return 0;		
+
+	index = (index << 2) | rv;
 	index &= 0b1111;
 	
 	switch (index) {
@@ -277,6 +284,9 @@ void read_duty(void)
 {
 	// 8bit -> 7bit
 	g_duty = adc_convert8(POT_DUTY) >> 1;
+	
+	// ‰ñ“]•ûŒü‚ğ”½“]
+	g_duty = 127 - g_duty;
 }
 
 /*------------------------------------------------------------------------/
