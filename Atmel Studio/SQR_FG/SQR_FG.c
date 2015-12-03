@@ -81,6 +81,7 @@ const uint16_t prescaler_table[] = {
 #define PRESCALER_256		((1<<CS12)|(0<<CS11)|(0<<CS10))
 #define PRESCALER_1024		((1<<CS12)|(0<<CS11)|(1<<CS10))
 
+#define PRESCALER_MAX		(sizeof(prescaler_table)/sizeof(uint16_t))
 #define PRESCALER_INIT		(PRESCALER_8)
 
 // デューティ
@@ -152,6 +153,7 @@ void timer1_init_PWM(uint16_t cycle, uint16_t duty)
 void timer1_set_prescaler(uint8_t prescaler)
 {
 	// プリスケーラのレジスタを設定
+	TCCR1B &= ~((1 << CS02) | (1 << CS01) | (1 << CS00));
 	TCCR1B |= prescaler;
 }
 
@@ -183,7 +185,7 @@ int8_t readRE_ROT(void)
 		break;
 	}
 	
-	_delay_ms(2);	// (とりあえず)チャタリング防止
+	//_delay_ms(2);	// (とりあえず)チャタリング防止
 	
 	return retVal;
 }
@@ -217,6 +219,21 @@ void read_cycle_idx()
 		g_cycle_idx = 0;
 	} else if (g_cycle_idx >= CYCLE_IDX_MAX) {
 		g_cycle_idx = CYCLE_IDX_MAX - 1;
+	}
+}
+
+//------------------------------------------------------------------------
+// プリスケーラを取得
+//
+void read_prescaler()
+{
+	g_prescaler += readRE_ROT();
+
+	// プリスケーラを 1..PRESCALER_MAXに制限
+	if (g_prescaler < 1) {
+		g_prescaler = 1;
+	} else if (g_prescaler >= PRESCALER_MAX) {
+		g_prescaler = PRESCALER_MAX - 1;
 	}
 }
 
@@ -272,6 +289,14 @@ uint32_t calc_freq(int8_t cycle_idx, uint8_t prescaler)
 	return ((uint32_t)F_CPU / 2) / cycle_table[cycle_idx] / prescaler_table[prescaler]; 
 }
  
+uint16_t calc_freq_fraction(int8_t cycle_idx, uint8_t prescaler)
+{
+	// 周期とプリスケーラから周波数の小数部2桁を計算
+	uint32_t integer = calc_freq(cycle_idx, prescaler);
+	uint32_t fraction =  ((uint32_t)F_CPU / 2) * 100 / cycle_table[cycle_idx] / prescaler_table[prescaler];
+	
+	return fraction - (integer * 100);
+}
 
  int main(void)
 {
@@ -344,10 +369,18 @@ uint32_t calc_freq(int8_t cycle_idx, uint8_t prescaler)
 				I2C_LCD_clear();
 				I2C_LCD_puts(LCD_line);
 			}
-			sprintf(LCD_line, "F:%7ld D:%2d ",
-				calc_freq(g_cycle_idx, g_prescaler),
-				g_duty * 100 / 128
-			);
+			if (g_prescaler < PRESCALER_64) {
+				sprintf(LCD_line, "F:%8ld D:%2d ",
+					calc_freq(g_cycle_idx, g_prescaler),
+					g_duty * 100 / 128
+				);
+			} else {
+				sprintf(LCD_line, "F:%5ld.%02d D:%2d",
+					calc_freq(g_cycle_idx, g_prescaler),
+					calc_freq_fraction(g_cycle_idx, g_prescaler),
+					g_duty * 100 / 128
+				);
+			}
 			I2C_LCD_setpos(0, 1);
 			I2C_LCD_puts(LCD_line);
 			/*
@@ -358,12 +391,17 @@ uint32_t calc_freq(int8_t cycle_idx, uint8_t prescaler)
 			break;
 		case STAT_PRESCALER:
 			// プリスケーラを取得
+			read_prescaler();
 			// プリスケーラを設定
+			timer1_set_prescaler(g_prescaler);
 			// LCDに表示
 			if (is_state_changed) {
 				I2C_LCD_clear();
 				I2C_LCD_puts(state_str[state]);
 			}
+			sprintf(LCD_line, "1/%d   ", prescaler_table[g_prescaler]);
+			I2C_LCD_setpos(0, 1);
+			I2C_LCD_puts(LCD_line);
 			break;
 		}
 		
