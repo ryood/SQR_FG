@@ -4,6 +4,10 @@
  * Created: 2015/05/07 15:41:32
  *  Author: gizmo
  * 
+ * ATMega328P Fuse Bit: h:D9 l:B7
+ *
+ * AtmelStudio 6.2
+ *
  * 2015.12.02 Ver.2
  */ 
 
@@ -14,7 +18,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/sfr_defs.h>
+#include <avr/sfr_defs.h>	/* for _BV() */
 #include <util/delay.h>
 
 #include "SPLC792-I2C.h"
@@ -49,19 +53,17 @@
 //
 #define STAT_SQR_WAV	0
 #define STAT_PRESCALER	1
-#define STAT_IMPULSE	2
-#define MAX_STAT		3
+#define MAX_STAT		2
 
 const char* state_str[] = {
-	"SQR WAV    ",
-	"PRE SCALER ",
-	"IMPULSE    ",
+	"SQR WAV   ",
+	"PRESCALER?",
 };
 
 // 周期設定
 //
 const uint16_t cycle_table[] = {
-	50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1
+	50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2
 };
 
 #define CYCLE_IDX_MAX		(sizeof(cycle_table)/sizeof(uint16_t))
@@ -69,23 +71,28 @@ const uint16_t cycle_table[] = {
 
 // プリスケーラ
 //
+const uint16_t prescaler_table[] = {
+	0, 1, 8, 64, 256, 1024
+};
+
 #define PRESCALER_1			((0<<CS12)|(0<<CS11)|(1<<CS10))
 #define PRESCALER_8			((0<<CS12)|(1<<CS11)|(0<<CS10))
 #define PRESCALER_64		((0<<CS12)|(1<<CS11)|(1<<CS10))
 #define PRESCALER_256		((1<<CS12)|(0<<CS11)|(0<<CS10))
 #define PRESCALER_1024		((1<<CS12)|(0<<CS11)|(1<<CS10))
 
-#define INITIAL_PRESCALER	(PRESCALER_8)
+#define PRESCALER_INIT		(PRESCALER_8)
 
 // デューティ
 //
-#define INITIAL_DUTY		(64)
+#define DUTY_INIT			(64)
 
 //-----------------------------------------------------------------------------
 // 帯域変数
 //-----------------------------------------------------------------------------
-volatile uint8_t g_cycle_idx;		/* 0 .. CYCLE_IDX_MAX */
+volatile int8_t g_cycle_idx;		/* 0 .. CYCLE_IDX_MAX */
 volatile uint8_t g_duty;			/* 0 .. 127 */
+volatile uint8_t g_prescaler;		/* 0b000 .. 0b111 */
 
 /*------------------------------------------------------------------------/
  * PWM
@@ -96,6 +103,12 @@ void timer1_set_cycle_duty(uint16_t cycle, uint16_t duty)
 	// Output Compare Register
 	OCR1A = cycle;
 	OCR1B = duty;
+}
+
+void timer1_stop_PWM(void)
+{
+	TCCR1A = 0;
+	TCCR1B = 0;
 }
 
 void timer1_init_PWM(uint16_t cycle, uint16_t duty)
@@ -115,16 +128,31 @@ void timer1_init_PWM(uint16_t cycle, uint16_t duty)
 	TCCR1A |= (1 << COM1B1) | (0 << COM1B0);
 	
 	// Timer1 Start, Set Prescaler to Initial Value
-	TCCR1B |= INITIAL_PRESCALER;
+	TCCR1B |= PRESCALER_INIT;
 	
 	// Test Prescaler
 	//TCCR1B |= (0 << CS12) | (1 << CS11) | (1<< CS10);
 }
 
-void timer1_stop_PWM(void)
+ void timer1_set_PWM(uint16_t cycle_idx, uint8_t duty)
+ {
+	 uint16_t cycle, duty_cnt;
+	
+	cycle = cycle_table[cycle_idx];
+	
+	// デューティー比からデューティーのカウントを計算 
+	// 1..cycle に制限
+	duty_cnt = (((uint32_t)cycle * duty) >> 7);
+	if (duty_cnt == 0)
+		duty_cnt = 1;
+		
+	timer1_set_cycle_duty(cycle, duty_cnt);
+ }
+
+void timer1_set_prescaler(uint8_t prescaler)
 {
-	TCCR1A = 0;
-	TCCR1B = 0;
+	// プリスケーラのレジスタを設定
+	TCCR1B |= prescaler;
 }
 
 /*------------------------------------------------------------------------/
@@ -177,6 +205,9 @@ int8_t readRE_SW(void)
 	else return 0;
 }
 
+//------------------------------------------------------------------------
+// 周期を取得
+//
 void read_cycle_idx()
 {
 	g_cycle_idx += readRE_ROT();
@@ -184,8 +215,8 @@ void read_cycle_idx()
 	// 周期インデックスを 0..CYCLE_TABLE_ELEMENTS に制限
 	if (g_cycle_idx < 0) {
 		g_cycle_idx = 0;
-	} else if (g_cycle_idex >= CYCLE_TABLE_ELEMENTS) {
-		g_cycle_idx = CYCLE_TABLE_ELEMENTS - 1;
+	} else if (g_cycle_idx >= CYCLE_IDX_MAX) {
+		g_cycle_idx = CYCLE_IDX_MAX - 1;
 	}
 }
 
@@ -222,53 +253,32 @@ uint8_t adc_convert8(uint8_t channel)
 	return ADCH;
 }
 
-// 戻り値: ADCの8bit読み取り値（POTの回転）
-//        7bit (0..127)
+//------------------------------------------------------------------------
+// デューティーを取得
 //
-uint8_t read_duty(void)
+void read_duty(void)
 {
 	// 8bit -> 7bit
-	return adc_convert8(POT_DUTY) >> 1;
+	g_duty = adc_convert8(POT_DUTY) >> 1;
 }
 
 /*------------------------------------------------------------------------/
- * generate wave
- *
- ------------------------------------------------------------------------*/
- void setPWM(uint_16 cycle_idx, uint_16 duty)
- {
-	cycle = cycle_table[cycle_idx];
-	
-	// デューティー比の計算 
-	// 1..cycle に制限
-	duty = (((uint32_t)cycle * duty) >> 7);
-	if (duty == 0)
-		duty = 1;
-		
-	timer1_set_cycle_duty(cycle, duty);
- }
-
-void setPreScaler(uint_8 prescaler)
-{
-	// レジスタを設定
-}
- 
-uint16_t calcFrequency(uint8_t cycle_idx, uint8_t duty)
-{
-	// 周期とデューティから周波数を計算
-	return 1000;
-}
- 
- 
- /*------------------------------------------------------------------------/
  * main routine
  *
  ------------------------------------------------------------------------*/
+uint32_t calc_freq(int8_t cycle_idx, uint8_t prescaler)
+{
+	// 周期とプリスケーラから周波数を計算
+	return ((uint32_t)F_CPU / 2) / cycle_table[cycle_idx] / prescaler_table[prescaler]; 
+}
+ 
+
  int main(void)
 {
 	// 状態変数
 	int8_t state = 0;
 	int8_t is_state_changed = 1;
+	
 	// LCD
 	char LCD_line[17];
 	
@@ -292,8 +302,11 @@ uint16_t calcFrequency(uint8_t cycle_idx, uint8_t duty)
 
 	// Initialize PWM
 	//
-	g_cycle_idx = cycle_table[INITIAL_CYCLE_IDX];
-	timer1_init_PWM(g_cycle_idx, DUTY_MAX/2);
+	g_cycle_idx = CYCLE_IDX_INIT;
+	g_duty = DUTY_INIT;
+	g_prescaler = PRESCALER_INIT;
+	timer1_init_PWM(g_cycle_idx, g_prescaler);
+	timer1_set_prescaler(g_prescaler);
 	
 	// Initialize I2C-LCD
 	//
@@ -303,7 +316,8 @@ uint16_t calcFrequency(uint8_t cycle_idx, uint8_t duty)
 	I2C_LCD_puts("Generator");
 	_delay_ms(1000);
 	
-	I2C_LCD_clear();
+	I2C_LCD_clear();	
+	I2C_LCD_puts(state_str[0]);
 	
 	//-------------------------------------------------------------------
 	// メイン・ループ
@@ -317,38 +331,44 @@ uint16_t calcFrequency(uint8_t cycle_idx, uint8_t duty)
 			is_state_changed = 1;
 			if (state >= MAX_STAT)
 				state = 0;
-			I2C_LCD_clear();
-			I2C_LCD_puts(state_str[state]);
 		}
 		
 		switch (state) {
 		case STAT_SQR_WAV:
-			// 周期を取得
 			read_cycle_idx();
-			// デューティを取得
 			read_duty();
-			// 矩形波を出力
-			setPWM(g_cycle_idx, g_duty);
+			timer1_set_PWM(g_cycle_idx, g_duty);
 			// LCDに表示
-			I2C_LCD_setpos(0, 1);
-			sprintf(LCD_line, "F:%7d D:%2d", 
-				calc_freq(cycle_table[g_cycle_idx], g_duty),
+			if (is_state_changed) {
+				sprintf(LCD_line, "%sP:%4d", state_str[state], prescaler_table[g_prescaler]);
+				I2C_LCD_clear();
+				I2C_LCD_puts(LCD_line);
+			}
+			sprintf(LCD_line, "F:%7ld D:%2d ",
+				calc_freq(g_cycle_idx, g_prescaler),
 				g_duty * 100 / 128
 			);
+			I2C_LCD_setpos(0, 1);
 			I2C_LCD_puts(LCD_line);
-			break;
-		case STAT_IMPULSE:
-			// 周期を取得
-			// impulseを出力
-			// LCDに表示
+			/*
+			sprintf(LCD_line, "%d %u %u ", g_cycle_idx, cycle_table[g_cycle_idx], g_duty);
+			I2C_LCD_setpos(0, 1);
+			I2C_LCD_puts(LCD_line);
+			*/
 			break;
 		case STAT_PRESCALER:
 			// プリスケーラを取得
 			// プリスケーラを設定
 			// LCDに表示
+			if (is_state_changed) {
+				I2C_LCD_clear();
+				I2C_LCD_puts(state_str[state]);
+			}
 			break;
 		}
 		
 		is_state_changed = 0;
+		
+		_delay_ms(1);
 	}
 }
